@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Live notepad with autosave and real-time updates functionality">
-    <title>Live Notepad</title>
+    <meta name="description" content="Local Notepad with Real-Time Sync Across Tabs">
+    <title>Local Notepad with Real-Time Sync</title>
     <style>
         body, html {
             height: 100%;
@@ -44,54 +44,38 @@
             color: #777;
         }
     </style>
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js"></script>
-    <!-- Firebase Database SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"></script>
 </head>
 <body>
     <div class="notepad-container">
-        <h2>Live Notepad</h2>
+        <h2>Local Notepad with Real-Time Sync</h2>
         <textarea id="notepad" placeholder="Start typing here..."></textarea>
-        <p class="info">Note: This notepad autosaves your content and updates in real-time across sessions.</p>
+        <p class="info">Note: This notepad autosaves your content locally and syncs across different browser tabs in real-time.</p>
     </div>
 
     <script>
-        // Firebase configuration object
-        const firebaseConfig = {
-            apiKey: "AIzaSyCAioCzBRRCTdXzbRYjlORXo3lmg5vgo_A",
-            authDomain: "livenotepad1.firebaseapp.com",
-            projectId: "livenotepad1",
-            storageBucket: "livenotepad1.appspot.com",
-            messagingSenderId: "916423603927",
-            appId: "1:916423603927:web:16448be8ebbc4d44382292",
-            measurementId: "G-2YETJRVXC0",
-            databaseURL: "https://livenotepad1-default-rtdb.firebaseio.com/"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Reference to the notepad content in the Firebase database
-        const notepadRef = database.ref('notepadContent');
-
         // Get the textarea element
         const notepad = document.getElementById('notepad');
 
-        // Listen for changes in the Firebase database and update the textarea
-        notepadRef.on('value', (snapshot) => {
-            console.log('Firebase Snapshot:', snapshot.val()); // Debug log
-            const content = snapshot.val();
-            if (content !== null) {
-                notepad.value = content;
+        // Load saved content from localStorage when the page loads
+        window.onload = () => {
+            const savedContent = localStorage.getItem('notepadContent');
+            if (savedContent) {
+                notepad.value = savedContent;
             }
+        };
+
+        // Save content to localStorage every time the user types
+        notepad.addEventListener('input', () => {
+            localStorage.setItem('notepadContent', notepad.value);
+            console.log('Content saved to localStorage:', notepad.value);
         });
 
-        // Save content to the Firebase database every time the user types
-        notepad.addEventListener('input', () => {
-            console.log('Saving content to Firebase:', notepad.value); // Debug log
-            notepadRef.set(notepad.value);
+        // Listen for changes to localStorage across tabs
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'notepadContent') {
+                notepad.value = event.newValue;
+                console.log('Content updated from another tab:', event.newValue);
+            }
         });
     </script>
 </body>
