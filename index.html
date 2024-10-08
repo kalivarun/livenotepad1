@@ -21,10 +21,11 @@
 
         /* Container styling */
         .notepad-container {
-            width: 90%; /* Wider width for larger box */
-            max-width: 1200px; /* Maximum width to prevent too large */
-            min-width: 800px; /* Minimum width for a good size */
+            width: 90%; /* Full width on small screens */
+            max-width: 1200px; /* Max width on larger screens */
+            min-width: 300px; /* Minimum width for better responsiveness */
             height: 80%; /* Increase the height for larger box */
+            max-height: 600px; /* Set a maximum height for the container */
             padding: 20px;
             background: #101010; /* Slightly lighter black */
             box-shadow: 0 0 30px rgba(0, 255, 0, 0.4); /* Green glow effect */
@@ -32,6 +33,7 @@
             border: 2px solid #33FF00; /* Green border */
             display: flex;
             flex-direction: column;
+            overflow: hidden; /* Prevent overflow */
         }
 
         /* Title styling */
@@ -57,9 +59,10 @@
             outline: none; /* Remove outline on focus */
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.2); /* Green glow effect */
             overflow-y: auto; /* Enable vertical scrolling */
+            max-height: calc(100% - 50px); /* Prevent overflow from the container */
+            margin-bottom: 10px; /* Add some spacing between textarea and info */
         }
 
-        /* Placeholder text styling */
         textarea::placeholder {
             color: #33FF00;
             opacity: 0.5; /* Slightly faded green */
@@ -72,10 +75,40 @@
             margin-top: 10px;
             font-size: 14px;
         }
-        textarea {
-            caret-color: #33FF00; /* Green cursor color */
+
+        /* Responsive Design Adjustments */
+        @media (max-width: 768px) {
+            .notepad-container {
+                height: 90%; /* Increase height on smaller screens */
+                max-width: 95%; /* Allow more width on smaller screens */
+            }
+
+            textarea {
+                font-size: 16px; /* Reduce font size slightly on mobile */
+                padding: 15px; /* Smaller padding */
+            }
+
+            .info {
+                font-size: 12px; /* Smaller font size for info text */
+            }
         }
 
+        @media (max-width: 480px) {
+            .notepad-container {
+                height: 95%; /* Almost full height on very small screens */
+                max-width: 100%; /* Full width on very small screens */
+                padding: 10px; /* Less padding */
+            }
+
+            textarea {
+                font-size: 14px; /* Reduce font size for better fit */
+                padding: 10px; /* Smaller padding */
+            }
+
+            .info {
+                font-size: 10px; /* Smaller font size for info text */
+            }
+        }
     </style>
 </head>
 <body>
