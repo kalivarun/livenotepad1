@@ -3,137 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hacker-style Live Notepad with Autosave Functionality">
+    <meta name="description" content="Multi-Notepad with Real-Time Sync and Autosave Functionality">
     <title>Hacker Notepad</title>
     <style>
-        /* Global body and HTML styling */
         body, html {
             height: 100%;
             margin: 0;
-            background: #000000; /* Dark background */
-            color: #33FF00; /* Neon green text */
-            font-family: 'Courier New', Courier, monospace; /* Hacker-style font */
+            background: #000000;
+            color: #33FF00;
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
         }
 
-        /* Container styling */
-        .notepad-container {
-            width: 90%; /* Full width on small screens */
-            max-width: 1200px; /* Max width on larger screens */
-            min-width: 300px; /* Minimum width for better responsiveness */
-            height: 80%; /* Increase the height for larger box */
-            max-height: 600px; /* Set a maximum height for the container */
+        /* Main container for the notepads */
+        .notepads-container {
+            width: 95%;
+            max-width: 1200px;
+            height: 90%;
             padding: 20px;
-            background: #101010; /* Slightly lighter black */
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4); /* Green glow effect */
+            background: #101010;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
             border-radius: 10px;
-            border: 2px solid #33FF00; /* Green border */
+            border: 2px solid #33FF00;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Prevent overflow */
+            overflow-y: auto; /* Enable scrolling */
+            overflow-x: hidden; /* Disable horizontal scrolling */
         }
 
-        /* Title styling */
         h2 {
-            color: #33FF00; /* Green title */
             text-align: center;
-            margin-bottom: 20px;
-            text-shadow: 0 0 5px #33FF00; /* Light green glow for text */
-        }
-
-        /* Textarea styling */
-        textarea {
-            flex-grow: 1; /* Allow textarea to grow and fill the container */
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-            font-size: 18px; /* Slightly larger font for readability */
-            background: #000000; /* Dark background inside textarea */
-            border: 2px solid #33FF00; /* Green border for textarea */
-            border-radius: 5px;
-            color: #33FF00; /* Green text */
-            resize: none; /* Disable resizing */
-            outline: none; /* Remove outline on focus */
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2); /* Green glow effect */
-            overflow-y: auto; /* Enable vertical scrolling */
-            max-height: calc(100% - 50px); /* Prevent overflow from the container */
-            margin-bottom: 10px; /* Add some spacing between textarea and info */
-        }
-
-        textarea::placeholder {
             color: #33FF00;
-            opacity: 0.5; /* Slightly faded green */
+            text-shadow: 0 0 5px #33FF00;
         }
 
-        /* Info text styling */
-        .info {
+        /* Add Notepad button styling */
+        .add-notepad-btn {
+            width: 200px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #000000;
+            border: 2px solid #33FF00;
+            border-radius: 5px;
+            color: #33FF00;
+            cursor: pointer;
+            font-size: 16px;
             text-align: center;
-            color: #33FF00; /* Green info text */
-            margin-top: 10px;
+            text-shadow: 0 0 5px #33FF00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        /* Individual notepad container */
+        .notepad {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #202020;
+            border: 2px solid #33FF00;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .notepad textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 16px;
+            background: #000000;
+            border: 1px solid #33FF00;
+            border-radius: 5px;
+            color: #33FF00;
+            resize: none;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .notepad-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #33FF00;
+            text-shadow: 0 0 5px #33FF00;
+        }
+
+        /* Delete button styling */
+        .delete-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            border: none;
+            background: #ff3333;
+            color: white;
+            cursor: pointer;
+            border-radius: 50%;
             font-size: 14px;
         }
 
-        /* Responsive Design Adjustments */
+        /* Responsive design for mobile */
         @media (max-width: 768px) {
-            .notepad-container {
-                height: 90%; /* Increase height on smaller screens */
-                max-width: 95%; /* Allow more width on smaller screens */
+            .notepad {
+                height: auto;
+                font-size: 14px;
             }
 
-            textarea {
-                font-size: 16px; /* Reduce font size slightly on mobile */
-                padding: 15px; /* Smaller padding */
+            .notepad textarea {
+                height: 100px;
             }
 
-            .info {
-                font-size: 12px; /* Smaller font size for info text */
-            }
-        }
-
-        @media (max-width: 480px) {
-            .notepad-container {
-                height: 95%; /* Almost full height on very small screens */
-                max-width: 100%; /* Full width on very small screens */
-                padding: 10px; /* Less padding */
-            }
-
-            textarea {
-                font-size: 14px; /* Reduce font size for better fit */
-                padding: 10px; /* Smaller padding */
-            }
-
-            .info {
-                font-size: 10px; /* Smaller font size for info text */
+            .add-notepad-btn {
+                width: 150px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="notepad-container">
+    <div class="notepads-container">
         <h2>Hacker's Notepad</h2>
-        <textarea id="notepad" placeholder="Start typing like a hacker..."></textarea>
-        <p class="info">Note: This notepad autosaves your content locally. Refresh or revisit the page to see your saved content.</p>
+        <button class="add-notepad-btn" onclick="addNotepad()">+ Add Notepad</button>
+        <!-- Container for dynamically added notepads -->
+        <div id="notepad-list"></div>
     </div>
 
     <script>
-        // Reference to the textarea
-        const notepad = document.getElementById('notepad');
+        // Array to hold notepads data
+        let notepads = [];
 
-        // Load saved content from localStorage when the page loads
+        // Load saved notepads from localStorage when the page loads
         window.onload = () => {
-            const savedContent = localStorage.getItem('notepadContent');
-            if (savedContent) {
-                notepad.value = savedContent;
+            const savedNotepads = JSON.parse(localStorage.getItem('notepads'));
+            if (savedNotepads) {
+                notepads = savedNotepads;
+                renderNotepads();
             }
         };
 
-        // Save content to localStorage every time the user types
-        notepad.addEventListener('input', () => {
-            localStorage.setItem('notepadContent', notepad.value);
-        });
+        // Save all notepads to localStorage
+        const saveNotepads = () => {
+            localStorage.setItem('notepads', JSON.stringify(notepads));
+        };
+
+        // Render all notepads to the DOM
+        const renderNotepads = () => {
+            const notepadList = document.getElementById('notepad-list');
+            notepadList.innerHTML = ''; // Clear the existing list
+
+            notepads.forEach((notepad, index) => {
+                const notepadDiv = document.createElement('div');
+                notepadDiv.className = 'notepad';
+
+                const notepadName = document.createElement('div');
+                notepadName.className = 'notepad-name';
+                notepadName.textContent = notepad.name;
+
+                const textarea = document.createElement('textarea');
+                textarea.value = notepad.content;
+                textarea.oninput = (e) => {
+                    notepads[index].content = e.target.value;
+                    saveNotepads();
+                };
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-btn';
+                deleteButton.textContent = 'x';
+                deleteButton.onclick = () => {
+                    deleteNotepad(index);
+                };
+
+                notepadDiv.appendChild(notepadName);
+                notepadDiv.appendChild(textarea);
+                notepadDiv.appendChild(deleteButton);
+                notepadList.appendChild(notepadDiv);
+            });
+        };
+
+        // Function to add a new notepad
+        const addNotepad = () => {
+            const notepadName = prompt('Enter notepad name:');
+            if (notepadName) {
+                notepads.push({ name: notepadName, content: '' });
+                saveNotepads();
+                renderNotepads();
+            }
+        };
+
+        // Function to delete a notepad
+        const deleteNotepad = (index) => {
+            notepads.splice(index, 1);
+            saveNotepads();
+            renderNotepads();
+        };
     </script>
 </body>
 </html>
