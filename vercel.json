@@ -1,9 +1,19 @@
 {
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/livenotepad1/index.html"
-      }
-    ]
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/index.js",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/public/index.js"
+    }
+  ],
+  "framework": {
+    "name": "next.js",
+    "pagesDir": "public"
   }
-  
+}
