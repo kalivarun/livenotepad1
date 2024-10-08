@@ -3,79 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Local Notepad with Real-Time Sync Across Tabs">
-    <title>Local Notepad with Real-Time Sync</title>
+    <meta name="description" content="Hacker-Style Real-Time Notepad with WebSocket Support">
+    <title>Hacker Notepad</title>
     <style>
+        /* Styling the notepad with a hacker theme */
         body, html {
             height: 100%;
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f0f0f0;
+            background: #101010;
+            color: #33FF00;
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #333;
+            overflow: hidden;
         }
 
         .notepad-container {
-            width: 80%;
-            max-width: 800px;
-            min-width: 300px;
+            width: 90%;
+            max-width: 1200px;
+            min-width: 600px;
+            height: 80%;
             padding: 20px;
-            background: #fff;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            background: #202020;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
             border-radius: 10px;
+            border: 2px solid #33FF00;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            color: #33FF00;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #33FF00;
         }
 
         textarea {
+            flex-grow: 1;
             width: 100%;
-            height: 400px;
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #ccc;
+            padding: 20px;
+            font-size: 18px;
+            background: #101010;
+            border: 2px solid #33FF00;
             border-radius: 5px;
+            color: #33FF00;
             resize: none;
             outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        textarea::placeholder {
+            color: #33FF00;
+            opacity: 0.5;
         }
 
         .info {
+            text-align: center;
+            color: #33FF00;
             margin-top: 10px;
             font-size: 14px;
-            color: #777;
         }
     </style>
 </head>
 <body>
     <div class="notepad-container">
-        <h2>Local Notepad with Real-Time Sync</h2>
-        <textarea id="notepad" placeholder="Start typing here..."></textarea>
-        <p class="info">Note: This notepad autosaves your content locally and syncs across different browser tabs in real-time.</p>
+        <h2>Hacker's Notepad</h2>
+        <textarea id="notepad" placeholder="Start typing like a hacker..."></textarea>
+        <p class="info">Note: This notepad autosaves your content and updates in real-time using WebSockets.</p>
     </div>
 
     <script>
         // Get the textarea element
         const notepad = document.getElementById('notepad');
 
-        // Load saved content from localStorage when the page loads
-        window.onload = () => {
-            const savedContent = localStorage.getItem('notepadContent');
-            if (savedContent) {
-                notepad.value = savedContent;
-            }
-        };
+        // Create a WebSocket connection to the server
+        const socket = new WebSocket('wss://your-websocket-server.herokuapp.com'); // Replace with your WebSocket server URL
 
-        // Save content to localStorage every time the user types
-        notepad.addEventListener('input', () => {
-            localStorage.setItem('notepadContent', notepad.value);
-            console.log('Content saved to localStorage:', notepad.value);
+        // Connection opened
+        socket.addEventListener('open', () => {
+            console.log('Connected to WebSocket server');
         });
 
-        // Listen for changes to localStorage across tabs
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'notepadContent') {
-                notepad.value = event.newValue;
-                console.log('Content updated from another tab:', event.newValue);
-            }
+        // Listen for messages from the server
+        socket.addEventListener('message', (event) => {
+            console.log('Message from server: ', event.data);
+            notepad.value = event.data;
+        });
+
+        // Send message to server whenever the user types
+        notepad.addEventListener('input', () => {
+            socket.send(notepad.value);
+        });
+
+        // Handle WebSocket close event
+        socket.addEventListener('close', () => {
+            console.log('Disconnected from WebSocket server');
+        });
+
+        // Handle errors
+        socket.addEventListener('error', (error) => {
+            console.error('WebSocket Error: ', error);
         });
     </script>
 </body>
