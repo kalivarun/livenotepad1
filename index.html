@@ -79,16 +79,18 @@
         // Get the textarea element
         const notepad = document.getElementById('notepad');
 
-        // Load initial content from Firebase when the page loads
+        // Listen for changes in the Firebase database and update the textarea
         notepadRef.on('value', (snapshot) => {
+            console.log('Firebase Snapshot:', snapshot.val()); // Debug log
             const content = snapshot.val();
             if (content !== null) {
                 notepad.value = content;
             }
         });
 
-        // Save content to Firebase whenever the user types in the textarea
+        // Save content to the Firebase database every time the user types
         notepad.addEventListener('input', () => {
+            console.log('Saving content to Firebase:', notepad.value); // Debug log
             notepadRef.set(notepad.value);
         });
     </script>
