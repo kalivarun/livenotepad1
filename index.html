@@ -44,8 +44,9 @@
             color: #777;
         }
     </style>
-    <!-- Include Firebase SDK -->
+    <!-- Firebase App (the core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js"></script>
+    <!-- Firebase Database SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js"></script>
 </head>
 <body>
@@ -56,11 +57,7 @@
     </div>
 
     <script>
-        // Import Firebase functions and initialize Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
-
-        // Your web app's Firebase configuration
+        // Firebase configuration object
         const firebaseConfig = {
             apiKey: "AIzaSyCAioCzBRRCTdXzbRYjlORXo3lmg5vgo_A",
             authDomain: "livenotepad1.firebaseapp.com",
@@ -73,26 +70,26 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         // Reference to the notepad content in the Firebase database
-        const notepadRef = ref(database, 'notepadContent');
+        const notepadRef = database.ref('notepadContent');
 
         // Get the textarea element
         const notepad = document.getElementById('notepad');
 
-        // Listen for changes in the Firebase database
-        onValue(notepadRef, (snapshot) => {
+        // Load initial content from Firebase when the page loads
+        notepadRef.on('value', (snapshot) => {
             const content = snapshot.val();
             if (content !== null) {
                 notepad.value = content;
             }
         });
 
-        // Save content to the Firebase database every time the user types
+        // Save content to Firebase whenever the user types in the textarea
         notepad.addEventListener('input', () => {
-            set(notepadRef, notepad.value);
+            notepadRef.set(notepad.value);
         });
     </script>
 </body>
