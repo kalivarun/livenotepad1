@@ -11,9 +11,5 @@
       "src": "/(.*)",
       "dest": "/public/index.js"
     }
-  ],
-  "framework": {
-    "name": "next.js",
-    "pagesDir": "public"
-  }
+  ]
 }
