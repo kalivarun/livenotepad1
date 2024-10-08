@@ -1,9 +1,0 @@
-{
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/livenotepad1/index.html"
-      }
-    ]
-  }
-  
