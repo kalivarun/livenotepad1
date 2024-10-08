@@ -1,31 +1,49 @@
+const express = require('express');
+const http = require('http');
 const WebSocket = require('ws');
-const PORT = process.env.PORT || 8080;
 
-// Create a WebSocket server
-const wss = new WebSocket.Server({ port: PORT }, () => {
-    console.log(`WebSocket server is running on port ${PORT}`);
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+// Store the current text content to broadcast to new clients
+let currentContent = '';
+
+// Broadcast to all clients
+const broadcast = (data) => {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+};
+
+// Handle connection events
+wss.on('connection', (ws) => {
+  console.log('New client connected');
+  
+  // Send the current content to the newly connected client
+  if (currentContent) {
+    ws.send(currentContent);
+  }
+
+  // Listen for messages from clients
+  ws.on('message', (message) => {
+    console.log(`Received message: ${message}`);
+    currentContent = message; // Update the stored content
+
+    // Broadcast the new content to all clients
+    broadcast(message);
+  });
+
+  // Handle client disconnection
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
 });
 
-// Listen for connection events
-wss.on('connection', (ws) => {
-    console.log('New client connected');
-
-    // Send a message to the newly connected client
-    ws.send('Welcome new client!');
-
-    // Listen for messages from the client
-    ws.on('message', (message) => {
-        console.log(`Received: ${message}`);
-        // Broadcast message to all connected clients
-        wss.clients.forEach(client => {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
-        });
-    });
-
-    // Handle client disconnect
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
+// Start the server
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
